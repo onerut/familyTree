@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
+class parser:
 
-class htmlParser:
 	def __init__(self, htmlFile):
 		self.soup = BeautifulSoup(htmlFile, 'html.parser')
 
