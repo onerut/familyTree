@@ -3,9 +3,9 @@ import tkinter.filedialog
 
 import os.path
 
-from htmlParser import htmlParser
-from strings import Strings
-from errors import ExtensionError
+from html_parser import htmlParser
+from resources.strings import Strings
+from resources.errors import ExtensionError
 
 class Application(tk.Frame):
     def __init__(self, master=None):
