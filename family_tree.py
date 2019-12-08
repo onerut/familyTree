@@ -18,23 +18,35 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.selected_file_path = tk.Text(self)
+        self.top = tk.Frame(self)
+        self.bottom = tk.Frame(self)
+        self.top.pack(side="top")
+        self.bottom.pack(side="bottom", fill=tk.X)
+
+
+        self.canvas = tk.Canvas(self,width = self.master.winfo_width()/2, height = self.master.winfo_height() - 100)
+        self.canvas.pack(in_= self.top,side="left", expand=True)
+
+        self.display_frame = tk.Frame(self,width = self.master.winfo_width()/2, height = self.master.winfo_height() - 100)
+        self.display_frame.pack(in_= self.top,side="right", expand=True)
+
+        self.selected_file_path = tk.Entry(self)
         self.selected_file_path.insert(tk.INSERT, Strings.get("selectedFilePlaceholder"))
-        self.selected_file_path.pack(side="top", fill=tk.BOTH, expand=True)
+        self.selected_file_path.pack(in_= self.bottom,side="top", fill=tk.X)
 
         self.select_file_button = tk.Button(self)
         self.select_file_button["text"] = Strings.get("selectFileButton")
         self.select_file_button["command"] = self.select_file
-        self.select_file_button.pack(side="top", fill=tk.BOTH, expand=True)
+        self.select_file_button.pack(in_= self.bottom,side="top", fill=tk.X)
 
         self.tree_visualizer_button = tk.Button(self)
         self.tree_visualizer_button["text"] = Strings.get("visualizeButton")
         self.tree_visualizer_button["command"] = self.visualize_tree
-        self.tree_visualizer_button.pack(side="top", fill=tk.BOTH, expand=True)
+        self.tree_visualizer_button.pack(in_= self.bottom,side="top", fill=tk.X)
 
         self.quit = tk.Button(self, text="QUIT", fg="white", bg="red",
                               command=self.master.destroy)
-        self.quit.pack(side="bottom", fill=tk.BOTH, expand=True)
+        self.quit.pack(in_= self.bottom,side="bottom", fill=tk.X)
 
     def visualize_tree(self):
         print("Starting Treeification...")
@@ -46,24 +58,24 @@ class Application(tk.Frame):
         print("Parsing Completed.")
 
         #Treeify the List
-        tree = self.treeify(family_members)
+        tree_root = self.treeify(family_members)
 
         print("Treeification Completed.")
 
         #Visualize the Tree
-        self.visualize(tree)
+        self.visualize(tree_root)
 
         print("Visualization Completed.")
 
     def select_file(self):
         print("Waiting for File Selection...")
         source_file_path = tk.filedialog.askopenfilename(parent = root, title = Strings.get("selectFileTitle"),filetypes = (("Hmtl Files","*.html"),("All Files","*.*")))
-        self.selected_file_path.delete(1.0, tk.END)
+        self.selected_file_path.delete(0, tk.END)
         self.selected_file_path.insert(tk.INSERT, source_file_path)
         print("File Selected.")
 
     def open_file(self):
-        source_file_path = self.selected_file_path.get(1.0, "end-1c")
+        source_file_path = self.selected_file_path.get()
 
         try:
             sf = open(source_file_path, encoding="utf8").read()
@@ -85,12 +97,19 @@ class Application(tk.Frame):
         family_root = node(family_members[0])
         for member in family_members:
             family_root.insert(member) 
-        family_root.print_tree()
+        family_root.print_tree() #Inorder print to console
         return family_root
 
-    def visualize(self, tree):
-        pass
+    def visualize(self, tree_root):
+        self.master.update_idletasks()
+        self.canvas.config(width = self.master.winfo_width()/2, height = self.master.winfo_height() - 100)
+        self.display_frame.config(width = self.master.winfo_width()/2, height = self.master.winfo_height() - 100)
+        self.display_frame.update_idletasks()
+        self.canvas.update_idletasks()
+        self.canvas.delete("all")
+        tree_root.visualize_tree(self.canvas)
 
 root = tk.Tk()
+root.update()
 app = Application(master=root)
 app.mainloop()
