@@ -43,3 +43,11 @@ class parser:
 
 		#list complete. Now return it.
 		return family_members
+	
+	def get_attributes(self):
+		attributes = list()
+		#create a list of attributes for each ancestor
+		for th in self.soup.find_all("th"):
+			attributes.append(th.string)
+		return attributes
+
